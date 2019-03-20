@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
+
 @Service
 public class UserService {
 
@@ -18,9 +20,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AppUser createUser(AppUser user) {
+    public AppUser createUser(AppUser user) throws AuthenticationException {
         AppUser existingAppUser = appUserRepository.findByEmail(user.getEmail());
-        if (existingAppUser != null) throw new RuntimeException("User Already exists");
+        if (existingAppUser != null) throw new AuthenticationException("User Already exists");
         AppUser newUser = new AppUser();
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
