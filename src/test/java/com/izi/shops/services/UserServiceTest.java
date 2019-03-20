@@ -10,8 +10,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.naming.AuthenticationException;
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,9 +34,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser() {
+    public void createUserSuccess() throws AuthenticationException {
+        when(repository.findByEmail(anyString())).thenReturn(null);
         AppUser result = userService.createUser(user);
         AppUser expected = new AppUser(1L, "email@exp.com", "123");
         assertEquals(expected, result);
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void createUserFailure() throws AuthenticationException {
+        when(repository.findByEmail(anyString())).thenReturn(user);
+        userService.createUser(user);
     }
 }
