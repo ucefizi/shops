@@ -19,6 +19,8 @@ public class UserService {
     }
 
     public AppUser createUser(AppUser user) {
+        AppUser existingAppUser = appUserRepository.findByEmail(user.getEmail());
+        if (existingAppUser != null) throw new RuntimeException("User Already exists");
         AppUser newUser = new AppUser();
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
